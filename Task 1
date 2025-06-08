@@ -1,96 +1,54 @@
-# Import necessary libraries
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
-
-# Set the path to the file you'd like to load
-file_path = "Titanic-Dataset.csv"
-
-# Load the latest version
-hf_dataset = kagglehub.load_dataset(
-  KaggleDatasetAdapter.HUGGING_FACE,
-  "yasserh/titanic-dataset",
-  file_path,
-  # Provide any additional arguments like
-  # sql_query, hf_kwargs, or pandas_kwargs. See
-  # the documenation for more information:
-  # https://github.com/Kaggle/kagglehub/blob/main/README.md#kaggledatasetadapterhugging_face
-)
-
-print("Hugging Face Dataset:", hf_dataset)
-
-
-# Convert Hugging Face dataset to pandas DataFrame for easier manipulation
-df = pd.DataFrame(hf_dataset)
-
-# Display initial information about the dataset
-print("\nInitial Dataset Info:")
-df.info()
-
-print("\nMissing values before cleaning:")
-print(df.isnull().sum())
-
-# Separate target variable
-X = df.drop('Survived', axis=1)
-y = df['Survived']
-
-# Define features to be transformed
-numerical_features = ['Age', 'Fare']
-categorical_features = ['Pclass', 'Sex', 'Embarked']
-
-# Create preprocessing pipelines for numerical and categorical features
-# Impute missing numerical values with the mean
-numerical_transformer = SimpleImputer(strategy='mean')
-
-# Impute missing categorical values with the most frequent value and one-hot encode
-categorical_transformer = Pipeline(steps=[
-    ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('onehot', OneHotEncoder(handle_unknown='ignore'))
-])
-
-# Create a column transformer to apply different transformations to different columns
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', numerical_transformer, numerical_features),
-        ('cat', categorical_transformer, categorical_features)
-    ],
-    remainder='passthrough' # Keep other columns (like Name, Ticket, Cabin) as they are
-)
-
-# Create the full preprocessing and modeling pipeline (we only do preprocessing here)
-pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
-
-# Apply the preprocessing pipeline to the features
-X_processed = pipeline.fit_transform(X)
-
-# Convert the processed features back to a DataFrame (optional, but good for inspection)
-# Get feature names after one-hot encoding
-# Use get_feature_names_out instead of get_feature_names_in
-ohe_feature_names = pipeline.named_steps['preprocessor'].named_transformers_['cat'].named_steps['onehot'].get_feature_names_out(categorical_features)
-processed_feature_names = numerical_features + list(ohe_feature_names) + list(X.columns.difference(numerical_features + categorical_features))
-
-# Create processed DataFrame
-X_processed_df = pd.DataFrame(X_processed, columns=processed_feature_names)
-
-print("\nProcessed data information:")
-X_processed_df.info()
-
-print("\nMissing values after cleaning:")
-print(X_processed_df.isnull().sum())
-
-# Example: Display the first few rows of the processed data
-print("\nFirst 5 rows of processed data:")
-print(X_processed_df.head())
-
-# Split data into training and testing sets (optional, but standard practice)
-X_train, X_test, y_train, y_test = train_test_split(X_processed, y, test_size=0.2, random_state=42)
-
-print(f"\nTraining data shape: {X_train.shape}")
-print(f"Testing data shape: {X_test.shape}")
-print(f"Training target shape: {y_train.shape}")
-print(f"Testing target shape: {y_test.shape}")
+AI & ML INTERNSHIP
+Hints/Mini Guide:
+1.Import the dataset and explore basic info (nulls, data types).
+2.Handle missing values using mean/median/imputation.
+3.Convert categorical features into numerical using encoding.
+4.Normalize/standardize the numerical features.
+5.Visualize outliers using boxplots and remove them.
+Interview Questions:
+1.What are the different types of missing data?
+2.How do you handle categorical variables?
+3.What is the difference between normalization and standardization?
+4.How do you detect outliers?
+5.Why is preprocessing important in ML?
+6.What is one-hot encoding vs label encoding?
+7.How do you handle data imbalance?
+8.Can preprocessing affect model accuracy?
+Dataset: You can use any dataset relevant to the task, e.g., Titanic Dataset
+link to download: click here to download dataset
+Task 1: Data Cleaning & Preprocessing
+Objective: Learn how to clean and prepare raw data for ML.
+Tools: Python, Pandas, NumPy, Matplotlib/Seaborn
+What You'll Learn: Data cleaning, handling nulls, encoding, feature scaling.
+📤
+👉
+Submit Here:
+After completing the task, paste your GitHub repo link and submit it using the link below:
+[Submission Link ]
+📌
+⏰
+🔍
+🛠
+💸
+📁
+📤
+👉
+Task Submission Guidelines
+Time Window:
+You can complete the task anytime between 10:00 AM to 10:00 PM on the given day. Submission link closes at
+10 :00 PM
+Self-Research Allowed:
+You are free to explore, Google, or refer to tutorials to understand concepts and complete the task effectively.
+Debug Yourself:
+Try to resolve all errors by yourself. This helps you learn problem-solving and ensures you don’t face the same
+issues in future tasks.
+No Paid Tools:
+If the task involves any paid software/tools, do not purchase anything. Just learn the process or find free
+alternatives.
+GitHub Submission:
+Create a new GitHub repository for each task.
+Add everything you used for the task — code, datasets, screenshots (if any), and a short README.md explaining
+what you did.
+Submit Here:
+After completing the task, paste your GitHub repo link and submit it using the link below:
+[Submission Link ]
